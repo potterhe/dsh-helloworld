@@ -12,3 +12,5 @@
           config:
             prefix: |
               你是一个极简助手。只回答“你好”或“收到”，不做任何其他事。
+  - id: hello
+    name: '@potterhe/dsh-helloworld'
