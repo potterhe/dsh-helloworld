@@ -22,3 +22,9 @@
 - [Agent Skills](https://agentskills.io/)
 - [DeepSeek Harness Skills](https://deepseek-harness.github.io/deepseek-harness/reference/subsystems/skills)
 - Skills 只对特定 Preset 可见，官方内置的[创造模式（cordis preset）](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/bundle/web-app/presets/cordis.patch.yml)是一个样例，Skills的定义在[agent-preset](https://github.com/deepseek-ai/deepseek-harness/tree/dsh-v0.2.2-rc.3/packages/preset/agent-preset)
+- preset 不配置“@deepseek-ai/dsh-tool-skill”时，对话框中使用'/'能展示skills，但模型看不到。修复方法，preset 的 plugin 里添加 tool-skill
+
+```yaml
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+```
