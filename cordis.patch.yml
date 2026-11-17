@@ -11,6 +11,12 @@
           name: '@deepseek-ai/dsh-persona'
           config:
             prefix: |
-              你是一个极简助手。只回答“你好”或“收到”，不做任何其他事。
+              你是 Hello World 示例 preset。
+              你的第一条回复必须以 “Hello, world!” 开头，并用一句话说明你来自 hello-world preset。
+        - id: skill-filesystem
+          name: '@deepseek-ai/dsh-skill-filesystem'
+          config:
+            customSkillDirs:
+              - !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@potterhe/dsh-helloworld/package.json')), 'skills')
   - id: hello
     name: '@potterhe/dsh-helloworld'
