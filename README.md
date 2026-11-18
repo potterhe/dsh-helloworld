@@ -4,7 +4,7 @@
 
 ```
 .
-├── src/index.ts        # Host 插件源码（name + Config + apply + hello 工具）
+├── src/index.ts        # Host 插件源码（name + Config + apply + hello / approval_hello 工具）
 ├── lib/                # tsc 构建产物，随仓库提交
 ├── cordis.patch.yml    # bundle 层：插入 preset 和插件行
 ├── tsconfig.json       # TypeScript 构建配置
@@ -27,7 +27,7 @@ npm run typecheck
 
 | 字段 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| `message` | `string` | 是 | 插件加载时打印的字符串；同时作为 `hello` 工具省略 `name` 时的问候语 |
+| `message` | `string` | 是 | 插件加载时打印的字符串；同时作为两个工具省略 `name` 时的问候语 |
 
 在 `cordis.patch.yml` 的插件行中通过 `config` 设置：
 
@@ -43,23 +43,27 @@ loader 的覆盖语义是整体替换 `config`，因此在 profile 的 `cordis.p
 
 ### 工具（Tool）
 
-插件加载时向模型注册一个名为 `hello` 的工具：
+插件加载时向模型注册两个行为相同、审批策略不同的工具：
 
-| 字段 | 类型 | 必填 | 说明 |
+| 工具 | 参数 | 行为 | 人工确认 |
 | --- | --- | --- | --- |
-| `name` | `string` | 否 | 问候对象。传入时返回 `Hello, <name>!`；省略或为空白时返回配置的 `message` |
+| `hello` | `name`（`string`，可选） | 返回 `Hello, <name>!`；省略或为空白时返回配置的 `message` | 否 |
+| `approval_hello` | 同上 | 与 `hello` 完全相同 | 是：每次调用先弹审批，允许后才执行 |
 
-工具返回一个字符串，并以文本块呈现给模型。注册发生在 `apply` 执行时；由于 `hello` 行挂在 profile 根组合（见下方 bundle 说明），该工具是全局注册，profile 下所有 preset 的模型都能看到并调用。
+两个工具都返回一个字符串，并以文本块呈现给模型；`name` 为问候对象，省略或为空白时返回配置的 `message`（默认 `Hello, world!`）。注册发生在 `apply` 执行时；由于 `hello` 行挂在 profile 根组合（见下方 bundle 说明），这些工具是全局注册，profile 下所有 preset 的模型都能看到并调用。
 
 在会话中可直接要求模型调用，例如：
 
 ```text
 用 hello 工具跟 Ada 打个招呼
+用 approval_hello 工具跟 Ada 打个招呼
 ```
 
-预期工具结果为 `Hello, Ada!`；省略或传入空白 `name` 时返回配置中的 `message`（默认 `Hello, world!`）。
+第一条直接得到 `Hello, Ada!`；第二条会先出现审批卡片，点击允许后才得到 `Hello, Ada!`。
 
-工具定义只依赖 `@deepseek-ai/dsh-tools` 的 `defineTool` 与 `ctx.tools.register`。`@deepseek-ai/dsh-tools` 由运行中的 dsh 安装提供，仓库内只把它声明为 peer/dev 依赖，用于类型检查与构建。修改 `src/index.ts` 后必须重新 `npm run build`，并重装 bundle、重启 dsh 才会生效（git/Gitee 安装不执行构建脚本）。
+`approval_hello` 的访问控制由 `tools/pre-execute` 返回 `ask` 实现：DSH 通过审批通道（Web 的审批卡片）询问一次，只有 `allowed-once` 才执行。拒绝时工具结果为 `the user rejected tool "approval_hello"`（`APPROVAL_REJECTED`）；取消为 `APPROVAL_CANCELLED`；没有可用审批通道或审批策略为 `never`（如 `danger-full-access` 权限模式）时失败关闭（`APPROVAL_UNAVAILABLE`）。PTC 调用（`tools.approval_hello(...)`）与子代理内的调用同样经过这套审批，每次调用独立确认。
+
+工具定义只依赖 `@deepseek-ai/dsh-tools` 的 `defineTool`、`ctx.tools.register` 与 `tools/pre-execute`。`@deepseek-ai/dsh-tools` 由运行中的 dsh 安装提供，仓库内只把它声明为 peer/dev 依赖，用于类型检查与构建。修改 `src/index.ts` 后必须重新 `npm run build`，并重装 bundle、重启 dsh 才会生效（git/Gitee 安装不执行构建脚本）。
 
 ### Preset
 

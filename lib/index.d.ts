@@ -3,7 +3,7 @@
  *
  * A minimal bundle entry used to verify that the loader resolves the package,
  * imports its entry module, and calls `apply`, and that the plugin can expose
- * a model-callable tool.
+ * model-callable tools, including one gated by human approval.
  * @module @potterhe/dsh-helloworld
  */
 import type { Context } from '@deepseek-ai/cordis';
@@ -14,14 +14,14 @@ export declare const name = "hello-plugin";
 export declare const inject: string[];
 /** Configuration accepted by the hello plugin. */
 export interface Config {
-    /** Text printed when the plugin loads; also the default greeting of the `hello` tool. */
+    /** Text printed when the plugin loads; also the default greeting of both tools. */
     message: string;
 }
 /** Runtime schema for {@link Config}. */
 export declare const Config: z<Config>;
 /**
- * Log the configured message when the loader activates this row and register
- * the model-callable `hello` tool.
+ * Log the configured message when the loader activates this row, register the
+ * `hello` and `approval_hello` tools, and gate the latter behind human approval.
  * @param ctx - the mounting Cordis context.
  * @param config - validated plugin configuration.
  */
