@@ -4,7 +4,7 @@
 
 ```
 .
-├── src/index.ts        # Host 插件源码（name + Config + apply）
+├── src/index.ts        # Host 插件源码（name + Config + apply + hello 工具）
 ├── lib/                # tsc 构建产物，随仓库提交
 ├── cordis.patch.yml    # bundle 层：插入 preset 和插件行
 ├── tsconfig.json       # TypeScript 构建配置
@@ -27,7 +27,7 @@ npm run typecheck
 
 | 字段 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| `message` | `string` | 是 | 插件加载时打印的字符串 |
+| `message` | `string` | 是 | 插件加载时打印的字符串；同时作为 `hello` 工具省略 `name` 时的问候语 |
 
 在 `cordis.patch.yml` 的插件行中通过 `config` 设置：
 
@@ -40,6 +40,26 @@ npm run typecheck
 ```
 
 loader 的覆盖语义是整体替换 `config`，因此在 profile 的 `cordis.patch.yml` 中覆盖 `hello` 行时也必须提供 `message`。修改 bundle 内的值后需要重装并重启，覆盖 profile 配置则由 loader 重新加载。
+
+### 工具（Tool）
+
+插件加载时向模型注册一个名为 `hello` 的工具：
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `name` | `string` | 否 | 问候对象。传入时返回 `Hello, <name>!`；省略或为空白时返回配置的 `message` |
+
+工具返回一个字符串，并以文本块呈现给模型。注册发生在 `apply` 执行时；由于 `hello` 行挂在 profile 根组合（见下方 bundle 说明），该工具是全局注册，profile 下所有 preset 的模型都能看到并调用。
+
+在会话中可直接要求模型调用，例如：
+
+```text
+用 hello 工具跟 Ada 打个招呼
+```
+
+预期工具结果为 `Hello, Ada!`；省略或传入空白 `name` 时返回配置中的 `message`（默认 `Hello, world!`）。
+
+工具定义只依赖 `@deepseek-ai/dsh-tools` 的 `defineTool` 与 `ctx.tools.register`。`@deepseek-ai/dsh-tools` 由运行中的 dsh 安装提供，仓库内只把它声明为 peer/dev 依赖，用于类型检查与构建。修改 `src/index.ts` 后必须重新 `npm run build`，并重装 bundle、重启 dsh 才会生效（git/Gitee 安装不执行构建脚本）。
 
 ### Preset
 
