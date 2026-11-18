@@ -1,14 +1,43 @@
 {
   "name": "@potterhe/dsh-helloworld",
-  "version": "1.0.3",
+  "version": "1.1.0",
+  "description": "Hello World bundle and preset example for DeepSeek Harness.",
   "private": true,
   "type": "module",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "index.js",
+    "lib",
+    "src",
     "cordis.patch.yml",
-    "skills"
+    "skills",
+    "README.md",
+    "LICENSE"
   ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/potterhe/dsh-helloworld.git"
+  },
+  "engines": {
+    "node": ">=22.19"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
