@@ -6,11 +6,20 @@
  * @module @potterhe/dsh-helloworld
  */
 import type { Context } from '@deepseek-ai/cordis';
+import z from '@deepseek-ai/schemastery';
 /** Cordis plugin name. */
 export declare const name = "hello-plugin";
+/** Configuration accepted by the hello plugin. */
+export interface Config {
+    /** Text printed when the plugin is loaded. */
+    message: string;
+}
+/** Runtime schema for {@link Config}. */
+export declare const Config: z<Config>;
 /**
- * Log a line when the loader activates this row.
+ * Log the configured message when the loader activates this row.
  * @param _ctx - the mounting Cordis context.
+ * @param config - validated plugin configuration.
  */
-export declare function apply(_ctx: Context): void;
+export declare function apply(_ctx: Context, config: Config): void;
 //# sourceMappingURL=index.d.ts.map

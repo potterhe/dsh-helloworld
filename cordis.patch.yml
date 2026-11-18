@@ -22,3 +22,5 @@
           name: '@deepseek-ai/dsh-tool-skill'
   - id: hello
     name: '@potterhe/dsh-helloworld'
+    config:
+      message: 'Hello, world!'

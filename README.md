@@ -4,7 +4,7 @@
 
 ```
 .
-├── src/index.ts        # Host 插件源码（name + apply）
+├── src/index.ts        # Host 插件源码（name + Config + apply）
 ├── lib/                # tsc 构建产物，随仓库提交
 ├── cordis.patch.yml    # bundle 层：插入 preset 和插件行
 ├── tsconfig.json       # TypeScript 构建配置
@@ -19,7 +19,27 @@ npm run build      # src/index.ts -> lib/
 npm run typecheck
 ```
 
-`package.json` 的 `main`/`types` 分别指向 `lib/index.js` 与 `lib/index.d.ts`。`lib/` 是生成产物，但 git/Gitee 安装不会执行构建脚本，因此修改 `src/` 后必须重新构建并提交 `lib/`。`@deepseek-ai/cordis` 仅用于类型导入，声明为 peer/dev 依赖。
+`package.json` 的 `main`/`types` 分别指向 `lib/index.js` 与 `lib/index.d.ts`。`lib/` 是生成产物，但 git/Gitee 安装不会执行构建脚本，因此修改 `src/` 后必须重新构建并提交 `lib/`。`@deepseek-ai/cordis` 仅用于类型导入，声明为 peer/dev 依赖；`@deepseek-ai/schemastery` 用于声明插件配置 schema，声明为运行时依赖。
+
+### 配置
+
+`hello-plugin` 支持一个字符串配置项，插件加载（`apply` 执行）时打印：
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `message` | `string` | 是 | 插件加载时打印的字符串 |
+
+在 `cordis.patch.yml` 的插件行中通过 `config` 设置：
+
+```yaml
+- insert:
+    - id: hello
+      name: '@potterhe/dsh-helloworld'
+      config:
+        message: Hello, world!
+```
+
+loader 的覆盖语义是整体替换 `config`，因此在 profile 的 `cordis.patch.yml` 中覆盖 `hello` 行时也必须提供 `message`。修改 bundle 内的值后需要重装并重启，覆盖 profile 配置则由 loader 重新加载。
 
 ### Preset
 
