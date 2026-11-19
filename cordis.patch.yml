@@ -1,17 +1,21 @@
+# Bundle layer: one agent preset per greeting tool. Each preset mounts the
+# hello plugin inside its own scope, so the tool it registers is visible only
+# to sessions that select that preset. The plugin is deliberately NOT mounted
+# at the profile root: a root-registered tool would be visible to every preset.
 - insert:
   - id: preset-helloworld
     name: '@deepseek-ai/dsh-agent-preset'
     config:
       id: hello-world
       name: HelloWorld
-      description: A minimal preset with persona only.
+      description: Hello World 示例；只提供无需人工确认的 hello 工具。
       order: 99
       plugins:
         - id: persona
           name: '@deepseek-ai/dsh-persona'
           config:
             prefix: |
-              你是 Hello World 示例 preset。
+              你是 Hello World 示例 preset（hello）。
               你的第一条回复必须以 “Hello, world!” 开头，并用一句话说明你来自 hello-world preset。
         - id: skill-filesystem
           name: '@deepseek-ai/dsh-skill-filesystem'
@@ -20,7 +24,37 @@
               - !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@potterhe/dsh-helloworld/package.json')), 'skills')
         - id: tool-skill
           name: '@deepseek-ai/dsh-tool-skill'
-  - id: hello
-    name: '@potterhe/dsh-helloworld'
+        - id: hello
+          name: '@potterhe/dsh-helloworld'
+          config:
+            message: 'Hello, world!'
+            hello: true
+            approvalHello: false
+  - id: preset-approval-helloworld
+    name: '@deepseek-ai/dsh-agent-preset'
     config:
-      message: 'Hello, world!'
+      id: hello-world-approval
+      name: HelloWorld Approval
+      description: Hello World 示例；只提供每次调用都需要人工确认的 approval_hello 工具。
+      order: 100
+      plugins:
+        - id: persona
+          name: '@deepseek-ai/dsh-persona'
+          config:
+            prefix: |
+              你是 Hello World 审批示例 preset（approval_hello）。
+              你只提供 approval_hello 工具，每次调用都会先请求人工确认。
+              你的第一条回复必须以 “Hello, world!” 开头，并用一句话说明你来自 hello-world-approval preset。
+        - id: skill-filesystem
+          name: '@deepseek-ai/dsh-skill-filesystem'
+          config:
+            customSkillDirs:
+              - !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@potterhe/dsh-helloworld/package.json')), 'skills')
+        - id: tool-skill
+          name: '@deepseek-ai/dsh-tool-skill'
+        - id: hello
+          name: '@potterhe/dsh-helloworld'
+          config:
+            message: 'Hello, world!'
+            hello: false
+            approvalHello: true

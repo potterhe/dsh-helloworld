@@ -1,6 +1,6 @@
 {
   "name": "@potterhe/dsh-helloworld",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Hello World bundle and preset example for DeepSeek Harness.",
   "private": true,
   "type": "module",
