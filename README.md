@@ -21,6 +21,18 @@ npm run typecheck
 
 `package.json` 的 `main`/`types` 分别指向 `lib/index.js` 与 `lib/index.d.ts`。`lib/` 是生成产物，但 git/Gitee 安装不会执行构建脚本，因此修改 `src/` 后必须重新构建并提交 `lib/`。`@deepseek-ai/cordis` 仅用于类型导入，声明为 peer/dev 依赖；`@deepseek-ai/schemastery` 用于声明插件配置 schema，声明为运行时依赖。
 
+### 版本兼容
+
+插件用 `engines.dsh` 声明兼容的 DSH 版本：存在 `engines.dsh` 时 DSH 只看这个范围，不再逐个检查 `@deepseek-ai/dsh-*` peer；没有它时，`peerDependencies` 中每个 `@deepseek-ai/dsh*` 范围都必须匹配运行中的 DSH 版本（预发布版本参与匹配）。
+
+| 字段 | 当前值 | 说明 |
+| --- | --- | --- |
+| `engines.dsh` | `^0.2.3-alpha.2` | 兼容的 DSH 版本；升级 DSH 后同步修改 |
+| `peerDependencies["@deepseek-ai/dsh-tools"]` | `^0.2.3-alpha.2` | 由运行中的 dsh 提供，仅用于类型检查与构建 |
+| `peerDependencies["@deepseek-ai/cordis"]` | `~4.2.0-alpha.1` | 与 `dsh-tools@0.2.3-alpha.2` 要求的 cordis 版本一致 |
+
+升级 DSH 后，把 `engines.dsh` 与两个 peer 一起改到新版本，重新 `npm install`、`npm run build`、`npm run typecheck`，再重装 bundle，否则会出现 `incompatible-version` 拒绝。
+
 ### 配置
 
 `hello-plugin` 支持一个字符串配置项，插件加载（`apply` 执行）时打印：

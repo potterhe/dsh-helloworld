@@ -1,6 +1,6 @@
 {
   "name": "@potterhe/dsh-helloworld",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Hello World bundle and preset example for DeepSeek Harness.",
   "private": true,
   "type": "module",
@@ -28,18 +28,19 @@
     "url": "git+https://github.com/potterhe/dsh-helloworld.git"
   },
   "engines": {
-    "node": ">=22.19"
+    "node": ">=22.19",
+    "dsh": "^0.2.3-alpha.2"
   },
   "dependencies": {
     "@deepseek-ai/schemastery": "~3.19.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "~4.1.0",
-    "@deepseek-ai/dsh-tools": "0.2.2-rc.4"
+    "@deepseek-ai/cordis": "~4.2.0-alpha.1",
+    "@deepseek-ai/dsh-tools": "^0.2.3-alpha.2"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "~4.1.0",
-    "@deepseek-ai/dsh-tools": "0.2.2-rc.4",
+    "@deepseek-ai/cordis": "~4.2.0-alpha.1",
+    "@deepseek-ai/dsh-tools": "^0.2.3-alpha.2",
     "@types/node": "^22.20.5",
     "typescript": "^5.9.3"
   },
